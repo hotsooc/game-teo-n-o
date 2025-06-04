@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import Navbar from '@/components/navbar';
+import CharacterTable from '@/components/table';
+import JoinTable from '@/components/table';
 
 interface User {
   name: string;
@@ -14,8 +16,9 @@ export default function Home() {
   const [teams, setTeams] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showJoined, setShowJoined] = useState(false);
+  const [showNotJoined, setShowNotJoined] = useState(false);
 
-  // Hàm lấy dữ liệu từ API route
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -26,68 +29,95 @@ export default function Home() {
           'Expires': '0',
         },
       });
-      console.log('Dữ liệu từ API:', response.data);
       setData(response.data);
       setError(null);
     } catch (error: unknown) {
       const err = error as AxiosError;
-      console.error('Lỗi khi lấy dữ liệu:', err.response?.data || err.message);
       setError(`Không thể tải dữ liệu: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // Lấy dữ liệu khi mount và polling mỗi 5 phút
   useEffect(() => {
-    fetchData(); // Lấy dữ liệu lần đầu
+    fetchData();
     const interval = setInterval(() => {
-      console.log('Đang polling dữ liệu từ API...');
       fetchData();
-    }, 300000); // Polling mỗi 5 phút
-    return () => clearInterval(interval); // Dọn dẹp khi component unmount
+    }, 300000);
+    return () => clearInterval(interval);
   }, []);
 
-  const makeTeams = () => {
-    const joined = Object.values(data.users)
-      .filter(user => user.choices.includes('✅'))
-      .map(user => user.name);
-    const shuffled = [...joined].sort(() => Math.random() - 0.5);
-    const mid = Math.ceil(shuffled.length / 2);
-    setTeams({
-      team1: shuffled.slice(0, mid),
-      team2: shuffled.slice(mid),
-    });
-  };
+  // const makeTeams = () => {
+  //   const joined = Object.values(data.users)
+  //     .filter(user => user.choices.includes('✅'))
+  //     .map(user => user.name);
+  //   const shuffled = [...joined].sort(() => Math.random() - 0.5);
+  //   const mid = Math.ceil(shuffled.length / 2);
+  //   setTeams({
+  //     team1: shuffled.slice(0, mid),
+  //     team2: shuffled.slice(mid),
+  //   });
+  // };
 
-  const joined = Object.values(data.users).filter(user => user.choices.includes('✅')).map(user => user.name);
-  const notJoined = Object.values(data.users).filter(user => user.choices.includes('❌')).map(user => user.name);
+  const joined = Object.values(data.users)
+    .filter(user => user.choices.includes('✅'))
+    .map(user => user.name);
+  const notJoined = Object.values(data.users)
+    .filter(user => user.choices.includes('❌'))
+    .map(user => user.name);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <Navbar />
-      <div className="p-6">
-        <h1 className="text-3xl font-bold text-center mb-6">Team</h1>
+      <div className="p-6 bg-[url('/image/1st_anniversary.webp')] bg-cover bg-center">
+        <h1 className="text-3xl font-bold border border-solid rounded-lg w-full border-amber-50 bg-white text-center mb-6">Những người tham gia</h1>
 
         {loading && <p className="text-center text-gray-500">Đang tải dữ liệu...</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
 
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-green-100 p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-4">Tham gia</h2>
-            <ul className="list-disc pl-5">
-              {joined.length ? joined.map((name, i) => <li key={i}>{name}</li>) : <li>Chưa có ai</li>}
-            </ul>
+          {/* Tham gia */}
+          <div className="bg-gradient-to-r from-green-500 to-green-200 p-4 rounded shadow">
+            <button
+              className={`w-full text-left font-semibold text-xl cursor-pointer mb-2 ${
+                joined.length === 0 ? 'text-gray-400 cursor-not-allowed' : 'text-green-700'
+              }`}
+              disabled={joined.length === 0}
+              onClick={() => setShowJoined(!showJoined)}
+            >
+              ✅ Tham gia ({joined.length})
+            </button>
+            {showJoined && (
+              <ul className="list-disc pl-5">
+                {joined.map((name, i) => (
+                  <li key={i}>{name}</li>
+                ))}
+              </ul>
+            )}
           </div>
-          <div className="bg-red-100 p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-4">Không tham gia</h2>
-            <ul className="list-disc pl-5">
-              {notJoined.length ? notJoined.map((name, i) => <li key={i}>{name}</li>) : <li>Chưa có ai</li>}
-            </ul>
+
+          {/* Không tham gia */}
+          <div className="bg-gradient-to-l from-red-500 to-red-200 p-4 rounded shadow">
+            <button
+              className={`w-full text-left font-semibold cursor-pointer text-xl mb-2 ${
+                notJoined.length === 0 ? 'text-gray-400 cursor-not-allowed' : 'text-red-700'
+              }`}
+              disabled={notJoined.length === 0}
+              onClick={() => setShowNotJoined(!showNotJoined)}
+            >
+              ❌ Không tham gia ({notJoined.length})
+            </button>
+            {showNotJoined && (
+              <ul className="list-disc pl-5">
+                {notJoined.map((name, i) => (
+                  <li key={i}>{name}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
-
-        <div className="max-w-4xl mx-auto mt-6">
+            {/* Xếp đội random */}
+        {/* <div className="max-w-4xl mx-auto mt-6">
           <button
             onClick={makeTeams}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
@@ -109,6 +139,9 @@ export default function Home() {
               </ul>
             </div>
           </div>
+        </div> */}
+        <div className='mt-3'>
+          <JoinTable />
         </div>
       </div>
     </div>
