@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import Navbar from '@/components/navbar';
-import CharacterTable from '@/components/table';
 import JoinTable from '@/components/table';
 
 interface User {
@@ -13,7 +12,6 @@ interface User {
 
 export default function Home() {
   const [data, setData] = useState<{ users: Record<string, User> }>({ users: {} });
-  const [teams, setTeams] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showJoined, setShowJoined] = useState(false);
