@@ -45,18 +45,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // const makeTeams = () => {
-  //   const joined = Object.values(data.users)
-  //     .filter(user => user.choices.includes('✅'))
-  //     .map(user => user.name);
-  //   const shuffled = [...joined].sort(() => Math.random() - 0.5);
-  //   const mid = Math.ceil(shuffled.length / 2);
-  //   setTeams({
-  //     team1: shuffled.slice(0, mid),
-  //     team2: shuffled.slice(mid),
-  //   });
-  // };
-
   const joined = Object.values(data.users)
     .filter(user => user.choices.includes('✅'))
     .map(user => user.name);
@@ -114,30 +102,6 @@ export default function Home() {
             )}
           </div>
         </div>
-            {/* Xếp đội random */}
-        {/* <div className="max-w-4xl mx-auto mt-6">
-          <button
-            onClick={makeTeams}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
-            disabled={loading}
-          >
-            Xếp đội
-          </button>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <div className="bg-white p-4 shadow rounded">
-              <h2 className="text-xl font-semibold mb-4">Team 1</h2>
-              <ul className="list-disc pl-5">
-                {teams.team1.length > 0 ? teams.team1.map((name, i) => <li key={i}>{name}</li>) : <li>Chưa có ai</li>}
-              </ul>
-            </div>
-            <div className="bg-white p-4 shadow rounded">
-              <h2 className="text-xl font-semibold mb-4">Team 2</h2>
-              <ul className="list-disc pl-5">
-                {teams.team2.length > 0 ? teams.team2.map((name, i) => <li key={i}>{name}</li>) : <li>Chưa có ai</li>}
-              </ul>
-            </div>
-          </div>
-        </div> */}
         <div className='mt-3'>
           <JoinTable />
         </div>
