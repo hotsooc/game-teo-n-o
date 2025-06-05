@@ -86,8 +86,9 @@ export default function JoinTable() {
       setContentParticipation(contentData);
       setReasonNote(reasonData);
       setResults(resultData);
-    } catch (err: any) {
-      setError(`Không thể tải dữ liệu: ${err.message}`);
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(`Không thể tải dữ liệu: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -105,8 +106,9 @@ export default function JoinTable() {
         reasonNote: reasonNote[userKey] || {},
         results: results[userKey] || '',
       });
-    } catch (err: any) {
-      setError(`Không thể lưu dữ liệu: ${err.message}`);
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(`Không thể tải dữ liệu: ${error.message}`);
     }
   };
 
@@ -194,8 +196,9 @@ export default function JoinTable() {
       setContentParticipation((prev) => { const p = { ...prev }; delete p[userKey]; return p; });
       setReasonNote((prev) => { const p = { ...prev }; delete p[userKey]; return p; });
       setResults((prev) => { const p = { ...prev }; delete p[userKey]; return p; });
-    } catch (err: any) {
-      setError(`Không thể xóa người dùng: ${err.message}`);
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(`Không thể xóa người dùng: ${error.message}`);
     }
   };
 
@@ -215,8 +218,9 @@ export default function JoinTable() {
       setContentParticipation({});
       setReasonNote({});
       setResults({});
-    } catch (err: any) {
-      setError(`Không thể xóa tất cả: ${err.message}`);
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(`Không thể xóa tất cả: ${error.message}`);
     }
   };
 
