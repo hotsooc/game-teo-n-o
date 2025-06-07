@@ -14,13 +14,13 @@ export default function Navbar() {
         backgroundRepeat: 'repeat-x',
         backgroundPosition: 'center bottom -300px',
         backgroundSize: 'cover',
-        // opacity: isHovered ? 1 : 0,
+        opacity: isHovered ? 0 : 0,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="max-w-4xl mx-auto flex justify-between items-center">
-        <h1 className="text-xl text-shadow font-bold">Hero's Land - XHCN Guild - Asia(Sea)</h1>
+        <h1 className="text-xl text-shadow font-bold">Hero Land - XHCN Guild - Asia(Sea)</h1>
         <div className="space-x-4 font-bold text-shadow">
           <Link href="/" className="hover:underline">Teammate</Link>
           <Link href="/role" className="hover:underline">Role</Link>
