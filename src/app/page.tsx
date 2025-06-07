@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import Navbar from '@/components/navbar';
 import JoinTable from '@/components/table';
+import Footer from '@/components/footer';
 
 interface User {
   name: string;
@@ -55,8 +56,10 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="p-6 bg-[url('/image/1st_anniversary.webp')] bg-cover bg-center">
-        <h1 className="text-3xl font-bold border border-solid rounded-lg w-full border-amber-50 bg-white text-center mb-6">Những người tham gia</h1>
+      {/* <div className="p-6 bg-[url('/image/1st_anniversary.webp')] bg-cover bg-center"> */}
+      <div className="p-6 bg-[url('/image/5818658.jpg')] bg-fixer bg-size-[auto_500px] bg-center">
+      {/* <div className='p-6'> */}
+        <h1 className="text-3xl font-bold w-full text-shadow text-center mb-6">Những người tham gia</h1>
 
         {loading && <p className="text-center text-gray-500">Đang tải dữ liệu...</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
@@ -106,6 +109,7 @@ export default function Home() {
           <JoinTable />
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
