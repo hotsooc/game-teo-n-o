@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 export default function Navbar() {
   // const [isHovered, setIsHovered] = useState(false);
