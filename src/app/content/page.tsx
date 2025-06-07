@@ -7,6 +7,7 @@ export default function Content() {
     <section>
       <Navbar />
       <div className='bg-gradient-to-t from-sky-300 to-green-100 min-h-screen'>
+        <div className='bg-[url(/image/5825609.jpg)] bg-cover bg-fixed min-h-screen'>
         <div className='py-8'>
           <div className='flex justify-center mb-6'>
             <span className='text-2xl font-bold'>Danh sách</span>
@@ -30,12 +31,13 @@ export default function Content() {
               </div>
             </div>
             <div>
-              <p className='font-semibold'>Hình ảnh minh hoạ</p>
+              <p className='font-semibold border border-black border-solid rounded-lg bg-green-50'>Hình ảnh minh hoạ</p>
               {/* Thêm hình ảnh nếu muốn */}
               <div className='flex justify-center items-center h-32'>
                 {/* <img src="/image/your-image.jpg" alt="minh hoạ" className="h-full object-contain" /> */}
               </div>
             </div>
+          </div>
           </div>
         </div>
         <Footer />
