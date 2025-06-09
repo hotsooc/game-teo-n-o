@@ -22,9 +22,10 @@ export default function Navbar() {
       <div className="max-w-4xl mx-auto flex justify-between items-center">
         <h1 className="text-xl text-shadow font-bold">Hero Land - XHCN Guild - Asia(Sea)</h1>
         <div className="space-x-4 font-bold text-shadow">
-          <Link href="/" className="hover:underline">Teammate</Link>
-          <Link href="/role" className="hover:underline">Role</Link>
-          <Link href="/content" className="hover:underline">Content</Link>
+          <Link href="/" className="hover:underline">Role & Content</Link>
+          <Link href="/role" className="hover:underline">Tính năng 1</Link>
+          <Link href="/content" className="hover:underline">Xếp team 1</Link>
+          <Link href="/feature" className="hover:underline">Xếp team 2</Link>
         </div>
       </div>
     </nav>
