@@ -32,20 +32,16 @@ export default function JoinTable() {
   >({});
   const [results, setResults] = useState<Record<string, string>>({});
   const [newUserName, setNewUserName] = useState('');
-  const [editingName, setEditingName] = useState<Record<string, string>>({});
 
   const weaponOptions = [
     'Sách băng', 'Carrot', 'Đao lửa', 'Kiếm Sky', 'Đao Sky', 'Grailseeker', 'Bearpaw',
-    'Doom 3', 'Tử thần 3', 'Totem', 'Chấm bi', 'Quạt', 'Chân nhện',
+    'Quạt',
   ];
 
   const weaponOptions2 = [
-    'Bọ lửa', 'Bọ băng', 'Gậy cừu', 'Cây thông', 'Gậy băng', 'Mỏ neo', 'Tim độc',
-    'Tim lửa', 'Cốc', 'Khiên băng', 'Cuốc băng/ bồ cào', 'Đồng hồ', 'Chọt băng',
-    'Dây hồng hài nhi', 'Bom',
+    'Tim độc', 'Tim lửa', 'Khiên băng', 'Cuốc băng/ bồ cào', 'Dây hồng hài nhi', 'Chân nhện'
   ];
 
-  // Loại bỏ trùng lặp trong mảng character
   const character = [
     'Ninja', 'Vua nhím', 'Demon', 'Bombano', 'Druid', 'Bard', 'Sparta', 'Vampire',
     'Wyvern', 'Mummy', 'Enginer', 'Swordman', 'Fighter', 'Berserker', 'Witch',
@@ -76,6 +72,7 @@ export default function JoinTable() {
         contentData[doc.id] = data.contentParticipation || {};
         reasonData[doc.id] = data.reasonNote || {};
         resultData[doc.id] = data.results || '';
+        console.log('Fetched data for', doc.id, 'with name:', usersData.users[doc.id].name);
       });
 
       setData(usersData);
@@ -88,16 +85,21 @@ export default function JoinTable() {
       setResults(resultData);
     } catch (err: unknown) {
       const error = err as Error;
+      console.error('Error fetching data:', error.message);
       setError(`Không thể tải dữ liệu: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const saveData = async (userKey: string) => {
+  const saveData = async (userKey: string, newName?: string) => {
     try {
+      const userData = newName 
+        ? { name: newName, choices: data.users[userKey]?.choices || [] }
+        : data.users[userKey] || { name: '', choices: [] };
+      console.log('Saving data for', userKey, 'with name:', userData.name);
       await setDoc(doc(db, 'userData', userKey), {
-        user: data.users[userKey] || { name: '', choices: [] },
+        user: userData,
         dpsWeapons: dpsWeapons[userKey] || [],
         subAndTankWeapons: subAndTankWeapons[userKey] || [],
         characters: characters[userKey] || [],
@@ -105,10 +107,12 @@ export default function JoinTable() {
         contentParticipation: contentParticipation[userKey] || {},
         reasonNote: reasonNote[userKey] || {},
         results: results[userKey] || '',
-      });
+      }, { merge: true });
+      console.log('Saved successfully for', userKey, 'with name:', userData.name);
     } catch (err: unknown) {
       const error = err as Error;
-      setError(`Không thể tải dữ liệu: ${error.message}`);
+      console.error('Error saving for', userKey, ':', error.message);
+      setError(`Không thể lưu dữ liệu: ${error.message}`);
     }
   };
 
@@ -142,20 +146,6 @@ export default function JoinTable() {
     });
   };
 
-  const handleNameChange = (userKey: string, newName: string) => {
-    setData((prev) => {
-      const updated = {
-        users: {
-          ...prev.users,
-          [userKey]: { ...prev.users[userKey], name: newName }
-        }
-      };
-      saveData(userKey);
-      return updated;
-    });
-    setEditingName((prev) => ({ ...prev, [userKey]: '' }));
-  };
-
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => fetchData(), 300000);
@@ -172,7 +162,7 @@ export default function JoinTable() {
           [newKey]: { name: newUserName.trim(), choices: [] }
         }
       };
-      saveData(newKey);
+      saveData(newKey, newUserName.trim());
       return updated;
     });
     setNewUserName('');
@@ -203,24 +193,26 @@ export default function JoinTable() {
   };
 
   const handleDeleteAll = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'userData'));
-      const deletePromises = querySnapshot.docs.map((doc) => deleteDoc(doc.ref));
-      await Promise.all(deletePromises);
-      setData({ users: {} });
-      setDpsWeapons({});
-      setWeaponSelections({});
-      setSubAndTankWeapons({});
-      setSubTankSelections({});
-      setCharacters({});
-      setCharacterSelections({});
-      setRoles({});
-      setContentParticipation({});
-      setReasonNote({});
-      setResults({});
-    } catch (err: unknown) {
-      const error = err as Error;
-      setError(`Không thể xóa tất cả: ${error.message}`);
+    if (window.confirm('Bạn có chắc muốn xóa tất cả dữ liệu? Hành động này không thể hoàn tác!')) {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'userData'));
+        const deletePromises = querySnapshot.docs.map((doc) => deleteDoc(doc.ref));
+        await Promise.all(deletePromises);
+        setData({ users: {} });
+        setDpsWeapons({});
+        setWeaponSelections({});
+        setSubAndTankWeapons({});
+        setSubTankSelections({});
+        setCharacters({});
+        setCharacterSelections({});
+        setRoles({});
+        setContentParticipation({});
+        setReasonNote({});
+        setResults({});
+      } catch (err: unknown) {
+        const error = err as Error;
+        setError(`Không thể xóa tất cả: ${error.message}`);
+      }
     }
   };
 
@@ -230,7 +222,7 @@ export default function JoinTable() {
 
   return (
     <div className="bg-gradient-to-br from-green-100 to-blue-200 p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Danh sách người đã tham gia</h2>
+      <h2 className="text-2xl text-black font-semibold mb-4">Danh sách người đã tham gia</h2>
 
       {loading && <p>Đang tải dữ liệu...</p>}
       {error && <p className="text-red-600">{error}</p>}
@@ -241,7 +233,7 @@ export default function JoinTable() {
           value={newUserName}
           onChange={(e) => setNewUserName(e.target.value)}
           placeholder="Nhập tên người tham gia"
-          className="border rounded p-2"
+          className="border rounded p-2 text-black"
         />
         <button
           onClick={handleAddUser}
@@ -261,7 +253,7 @@ export default function JoinTable() {
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
             <thead className="bg-gradient-to-b from-amber-100 to-sky-100">
-              <tr>
+              <tr className='text-black'>
                 <th rowSpan={2} className="text-center px-4 py-2 border">STT</th>
                 <th rowSpan={2} className="text-center px-4 py-2 border">Name</th>
                 <th rowSpan={2} className="text-center px-4 py-2 border">DPS Weap</th>
@@ -274,7 +266,7 @@ export default function JoinTable() {
                 <th rowSpan={2} className="text-center px-4 py-2 border">Note</th>
                 <th rowSpan={2} className="text-center px-4 py-2 border">Xoá</th>
               </tr>
-              <tr>
+              <tr className='text-black'>
                 <th className="text-center px-4 py-2 border">DPS ⚔️</th>
                 <th className="text-center px-4 py-2 border">Tank 🛡</th>
                 <th className="text-center px-4 py-2 border">Sup +</th>
@@ -291,33 +283,9 @@ export default function JoinTable() {
                   const selectedCharacter = characters[key] || [];
 
                   return (
-                    <tr key={idx} className="even:bg-white odd:bg-gray-50">
+                    <tr key={idx} className="even:bg-white text-black odd:bg-gray-50">
                       <td className="border text-center px-2 py-1">{idx + 1}</td>
-                      <td className="border px-2 py-1">
-                        {editingName[key] !== undefined ? (
-                          <input
-                            type="text"
-                            value={editingName[key]}
-                            onChange={(e) => setEditingName((prev) => ({ ...prev, [key]: e.target.value }))}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                handleNameChange(key, editingName[key] || user.name);
-                              }
-                            }}
-                            onBlur={() => handleNameChange(key, editingName[key] || user.name)}
-                            className="w-full p-1 border rounded"
-                            autoFocus
-                          />
-                        ) : (
-                          <div
-                            className="cursor-pointer hover:underline"
-                            onClick={() => setEditingName((prev) => ({ ...prev, [key]: user.name }))}
-                          >
-                            {user.name}
-                          </div>
-                        )}
-                      </td>
+                      <td className="border px-2 py-1 text-center">{user.name}</td>
                       <td className="border px-2 py-1">
                         <div className="flex flex-col gap-2">
                           <select
@@ -649,7 +617,7 @@ export default function JoinTable() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={16} className="text-center py-4 text-gray-500">
+                  <td colSpan={16} className="text-center py-4 text-black">
                     Chưa có người tham gia
                   </td>
                 </tr>
