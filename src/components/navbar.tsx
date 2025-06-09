@@ -20,7 +20,7 @@ export default function Navbar() {
       // onMouseLeave={() => setIsHovered(false)}
     >
       <div className="max-w-4xl mx-auto flex justify-between items-center">
-        <h1 className="text-xl text-shadow font-bold">Hero Land - XHCN Guild - Asia(Sea)</h1>
+        <h1 className="text-xl text-shadow font-bold">Hero Land&apos;s - XHCN Guild - Asia(Sea)</h1>
         <div className="space-x-4 font-bold text-shadow">
           <Link href="/" className="hover:underline">Role & Content</Link>
           <Link href="/role" className="hover:underline">Tính năng 1</Link>
