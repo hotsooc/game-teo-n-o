@@ -6,7 +6,7 @@ export default function Role() {
   return (
     <section>
         <Navbar />
-        <div></div>
+        <div className='h-[1000px] bg-black'></div>
         <Footer />
     </section>
   )
