@@ -1,3 +1,5 @@
+"use client";
+
 import DragDropTable from '@/components/dragdroptable'
 import Footer from '@/components/footer'
 import Iridescence from '@/components/iredescence'
